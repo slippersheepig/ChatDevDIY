@@ -2,7 +2,7 @@ FROM alpine AS builder
 RUN apk add --no-cache wget zip
 RUN wget https://github.com/OpenBMB/ChatDev/archive/refs/tags/v1.1.1.zip && unzip -d /chatdev v1.1.1.zip
 
-FROM python:3.9-alpine
+FROM python:3.9-slim
 WORKDIR /chatdev
 COPY --from=builder /chatdev/ChatDev-1.1.1 .
 RUN pip install --no-cache-dir -r requirements.txt
