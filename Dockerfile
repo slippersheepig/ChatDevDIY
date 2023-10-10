@@ -1,7 +1,7 @@
 FROM alpine AS builder
 RUN apk add --no-cache wget zip
 RUN wget https://github.com/OpenBMB/ChatDev/archive/refs/tags/v1.1.1.zip && unzip v1.1.1.zip
-RUN cp v1.1.1 /chatdev
+RUN cp -r v1.1.1 /chatdev
 
 FROM python:alpine
 WORKDIR /chatdev
