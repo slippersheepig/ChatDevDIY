@@ -4,7 +4,7 @@ https://github.com/OpenBMB/ChatDev
 ```bash
 services:
   chatdev:
-    image: sheepgreen/chatdev
+    image: sheepgreen/chatdev #or use ghcr.io/slippersheepig/chatdev
     container_name: chatdev
     environment:
       - OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
