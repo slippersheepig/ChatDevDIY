@@ -2,33 +2,47 @@ name: ci
 
 on:
   workflow_dispatch:
+    inputs:
+      chatdev_ref:
+        description: 'OpenBMB/ChatDev ref to build ("latest" release, or an explicit tag)'
+        required: false
+        default: "latest"
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - image: backend
+            dockerfile: Dockerfile
+          - image: frontend
+            dockerfile: frontend.Dockerfile
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v6
+
+      - name: Build and push ${{ matrix.image }}
+        uses: docker/build-push-action@v7
         with:
           context: .
-          platforms: linux/amd64, linux/arm64
+          file: ${{ matrix.dockerfile }}
+          build-args: |
+            CHATDEV_REF=${{ github.event.inputs.chatdev_ref || 'latest' }}
+          platforms: linux/amd64,linux/arm64
           push: true
-          tags: sheepgreen/chatdev:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/chatdev-${{ matrix.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
