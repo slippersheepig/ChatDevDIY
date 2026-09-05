@@ -1,3 +1,4 @@
 .git
 Dockerfile
+frontend.Dockerfile
 README.md
