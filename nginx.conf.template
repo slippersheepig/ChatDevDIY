@@ -5,13 +5,11 @@ server {
     root   /usr/share/nginx/html;
     index  index.html;
 
-    # Vue Router history mode: fall back to index.html for unknown paths
     location / {
         try_files $uri $uri/ /index.html;
     }
 
-    # REST API -> backend (mirrors frontend/vite.config.js dev proxy rule)
-    location /api/ {
+    location /api {
         proxy_pass ${BACKEND_URL};
         proxy_http_version 1.1;
         proxy_set_header Host $host;
@@ -20,8 +18,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # WebSocket (live logs, launch feed, etc.) -> backend
-    location /ws/ {
+    location /ws {
         proxy_pass ${BACKEND_URL};
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
