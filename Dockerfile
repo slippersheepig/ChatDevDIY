@@ -64,10 +64,6 @@ ENV PATH="/opt/venv/bin:${PATH}" \
     PYTHONUNBUFFERED=1 \
     BACKEND_BIND=${BACKEND_BIND}
 
-# Drop privileges
-RUN useradd -m appuser && chown -R appuser:appuser /app
-USER appuser
-
 EXPOSE 6400
 
 # Run the DevAll backend server, parameterized by env
